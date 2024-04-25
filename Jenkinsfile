@@ -23,9 +23,11 @@ pipeline {
                     bat 'docker tag uc3 ' + DOCKER_USERNAME + '/uc3:latest'
                     bat 'docker push ' + DOCKER_USERNAME + '/uc3:latest'
                     
-                    bat 'docker build -t frontend ./frontend'
-                    bat 'docker tag frontend ' + DOCKER_USERNAME + '/frontend:latest'
-                    bat 'docker push ' + DOCKER_USERNAME + '/frontend:latest'
+                    dir("frontend") {
+                        bat 'docker build -t frontend .'
+                        bat 'docker tag frontend ' + DOCKER_USERNAME + '/frontend:latest'
+                        bat 'docker push ' + DOCKER_USERNAME + '/frontend:latest'
+                    }
                 }
             }
         }
@@ -34,7 +36,9 @@ pipeline {
             steps {
                 // Deploy Kubernetes resources
                 bat 'kubectl config use-context minikube'
-               
+                bat 'kubectl apply -f kubernetes.yaml'
+                echo 'Success'
+
                 
             }
         }
